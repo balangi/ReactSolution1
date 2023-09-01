@@ -23,6 +23,7 @@ export default class App extends Component {
         super(props);
         this.state = {
             forecasts: [],
+            authenticates2: [],
             loading: true,
             errorMessages: {
                 name: "pass",
@@ -69,7 +70,7 @@ export default class App extends Component {
 
     renderErrorMessage = (name) => {
         //window.alert(name.name + " : " + name.message)
-        window.alert(this.state.errorMessages.name)
+        // window.alert(this.state.errorMessages.name)
 
         name.name === this.state.errorMessages.name && (
             <div className="error">{this.state.errorMessages.message}</div>
@@ -78,6 +79,7 @@ export default class App extends Component {
 
     componentDidMount() {
         this.populateWeatherData();
+        this.populateAuthenticate();
     }
 
     static renderForecastsTable(forecasts) {
@@ -93,6 +95,31 @@ export default class App extends Component {
                 </thead>
                 <tbody>
                     {forecasts.map(forecast =>
+                        <tr key={forecast.date}>
+                            <td>{forecast.date}</td>
+                            <td>{forecast.temperatureC}</td>
+                            <td>{forecast.temperatureF}</td>
+                            <td>{forecast.summary}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        );
+    }
+
+    static renderAuthenticatesTable(authenticates) {
+        return (
+            <table className='table table-striped' aria-labelledby="tabelLabel">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Temp. (C)</th>
+                        <th>Temp. (F)</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {authenticates.map(forecast =>
                         <tr key={forecast.date}>
                             <td>{forecast.date}</td>
                             <td>{forecast.temperatureC}</td>
@@ -131,12 +158,17 @@ export default class App extends Component {
             ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
             : App.renderForecastsTable(this.state.forecasts);
 
+        let contents2 = this.state.loading
+            ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+            : App.renderAuthenticatesTable(this.state.authenticates2);
+
         return (
             <div className="app">
                 <div className="login-form">
                     <div className="title">Sign In</div>
                     {this.state.isSubmitted = sessionStorage.getItem("pageView")}
                     {this.state.isSubmitted ? contents : renderForm}
+                    {this.state.isSubmitted ? contents2 : renderForm}
                 </div>
             </div>
         );
@@ -146,5 +178,11 @@ export default class App extends Component {
         const response = await fetch('weatherforecast');
         const data = await response.json();
         this.setState({ forecasts: data, loading: false });
+    }
+
+    async populateAuthenticate() {
+        const response = await fetch('Authenticate');
+        const data = await response.json();
+        this.setState({ authenticates2: data, loading: false });
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using webapi.Models;
 
 namespace webapi.Controllers;
 
@@ -28,5 +29,18 @@ public class WeatherForecastController : ControllerBase
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
         .ToArray();
+    }
+
+    [HttpGet("/Authenticate")]
+    public AuthResult GetAuth([FromQuery] LoginModel login)
+    {
+        if (login.Username == "user1" && login.Password == "pass1")
+        {
+            return new AuthResult { IsAuthenticated = true };
+        }
+        else
+        {
+            return new AuthResult { Error = "Invalid User", IsAuthenticated = false };
+        }
     }
 }
